@@ -11,6 +11,8 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookKeeperTest {
+
+	// testy stanu
 	@Test
 	public void zadanieWydaniaFakturyZJednaPozycjaPowinnoZwrocicFaktureZJednaPozycja() {
 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
@@ -36,6 +38,20 @@ class BookKeeperTest {
 		assertEquals(1, invoice.getItems().size());
 	}
 
+	@Test
+	public void zadanieWydaniaFakturyBezPozycjiPowinnoZwrocicFuktureBezPozycji() {
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		TaxPolicy taxPolicyMock = Mockito.mock(TaxPolicy.class);
+		Tax tax = new Tax(Money.ZERO, "");
+		Mockito.when(taxPolicyMock.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
+
+		InvoiceRequest req = new InvoiceRequest(Mockito.mock(ClientData.class));
+		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
+
+		assertEquals(0, invoice.getItems().size());
+	}
+
+	// testy zachowania
 	@Test
 	public void zadanieWydaniaFakturyZDwiemaPozycjamiPowinnoWywolacMetodeCalculateTaxDwaRazy() {
 		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
@@ -64,6 +80,17 @@ class BookKeeperTest {
 		Mockito.verify(taxPolicyMock, Mockito.times(2)).calculateTax(Mockito.any(), Mockito.any());
 	}
 
-	// kolejne testy
-	// // 1.
+	@Test
+	public void zadanieWydaniaFakturyBezPozycjiPowinnoWywolacMetodeCalculateTaxZeroRazy() {
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		TaxPolicy taxPolicyMock = Mockito.mock(TaxPolicy.class);
+		Tax tax = new Tax(Money.ZERO, "");
+		Mockito.when(taxPolicyMock.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
+
+		InvoiceRequest req = new InvoiceRequest(Mockito.mock(ClientData.class));
+		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
+
+		assertEquals(0, invoice.getItems().size());
+		Mockito.verify(taxPolicyMock, Mockito.times(0)).calculateTax(Mockito.any(), Mockito.any());
+	}
 }
