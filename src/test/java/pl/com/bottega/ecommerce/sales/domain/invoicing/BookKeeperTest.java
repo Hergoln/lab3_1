@@ -51,6 +51,18 @@ class BookKeeperTest {
 		assertEquals(0, invoice.getItems().size());
 	}
 
+	@Test
+	public void fakturaWykonanaDlaDanegoKlientaFaktyczniePosiadaDaneTegoKlienta() {
+		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
+		TaxPolicy taxPolicyMock = Mockito.mock(TaxPolicy.class);
+		ClientData client = new ClientData(new Id("007"), "James Bond");
+		InvoiceRequest req = new InvoiceRequest(client);
+		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
+
+		assertEquals("007", invoice.getClient().getAggregateId().toString());
+		assertEquals("James Bond", invoice.getClient().getName());
+	}
+
 	// testy zachowania
 	@Test
 	public void zadanieWydaniaFakturyZDwiemaPozycjamiPowinnoWywolacMetodeCalculateTaxDwaRazy() {
@@ -92,5 +104,17 @@ class BookKeeperTest {
 
 		assertEquals(0, invoice.getItems().size());
 		Mockito.verify(taxPolicyMock, Mockito.times(0)).calculateTax(Mockito.any(), Mockito.any());
+	}
+
+	@Test
+	public void wykonanieFakturyWywolujeMetodeCreateKlasyInvoiceFactoryDokladnieRaz() {
+		InvoiceFactory invoiceFactoryMock = Mockito.mock(InvoiceFactory.class);
+		BookKeeper bookKeeper = new BookKeeper(invoiceFactoryMock);
+
+		TaxPolicy taxPolicyMock = Mockito.mock(TaxPolicy.class);
+		InvoiceRequest req = Mockito.mock(InvoiceRequest.class);
+		bookKeeper.issuance(req, taxPolicyMock);
+
+		Mockito.verify(invoiceFactoryMock, Mockito.times(1)).create(Mockito.any());
 	}
 }
