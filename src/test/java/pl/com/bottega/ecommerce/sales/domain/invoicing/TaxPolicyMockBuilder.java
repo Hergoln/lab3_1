@@ -4,19 +4,19 @@ import org.mockito.Mockito;
 import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
 import pl.com.bottega.ecommerce.sharedkernel.Money;
 
-public class TaxPolicyBuilder {
+public class TaxPolicyMockBuilder {
 
 	private Tax tax;
 
-	private TaxPolicyBuilder() {
+	private TaxPolicyMockBuilder() {
 
 	}
 
-	public static TaxPolicyBuilder builder() {
-		return new TaxPolicyBuilder();
+	public static TaxPolicyMockBuilder builder() {
+		return new TaxPolicyMockBuilder();
 	}
 
-	public TaxPolicyBuilder withTax(Tax tax) {
+	public TaxPolicyMockBuilder withTax(Tax tax) {
 		this.tax = tax;
 		return this;
 	}

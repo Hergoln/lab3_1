@@ -10,25 +10,25 @@ import pl.com.bottega.ecommerce.sharedkernel.Money;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvoiceRequestBuilder {
+public class InvoiceRequestMockBuilder {
 
 	private ClientData client;
 	private List<Product> productsList;
 
-	private InvoiceRequestBuilder() {
+	private InvoiceRequestMockBuilder() {
 		productsList = new ArrayList<>();
 	}
 
-	public static InvoiceRequestBuilder builder() {
-		return new InvoiceRequestBuilder();
+	public static InvoiceRequestMockBuilder builder() {
+		return new InvoiceRequestMockBuilder();
 	}
 
-	public InvoiceRequestBuilder withClient(ClientData client) {
+	public InvoiceRequestMockBuilder withClient(ClientData client) {
 		this.client = client;
 		return this;
 	}
 
-	public InvoiceRequestBuilder withProductsCount(int count) {
+	public InvoiceRequestMockBuilder withProductsCount(int count) {
 		for (int i = 0; i < count; i++) {
 			productsList.add(new Product(
 					Mockito.mock(Id.class),
