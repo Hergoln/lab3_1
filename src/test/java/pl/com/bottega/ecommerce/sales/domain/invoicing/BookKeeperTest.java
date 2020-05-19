@@ -55,9 +55,8 @@ class BookKeeperTest {
 		assertEquals("James Bond", invoice.getClient().getName());
 	}
 
-	// testy zachowania
 	@Test
-	public void zadanieWydaniaFakturyZDwiemaPozycjamiPowinnoWywolacMetodeCalculateTaxDwaRazy() {
+	public void fakturaWykonanaZIncoiceRequestZDwiemaPozycjamiPowinnaMiecDwiePozycje() {
 		InvoiceRequest req = InvoiceRequestBuilder
 				.builder()
 				.withProductsCount(2)
@@ -65,15 +64,33 @@ class BookKeeperTest {
 		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
 
 		assertEquals(2, invoice.getItems().size());
+	}
+
+	@Test
+	public void fakturaWykonanaZIncoiceRequestBezPozycjiPowinnaNieMiecZadnychPozycji() {
+		InvoiceRequest req = InvoiceRequestBuilder.builder().build();
+		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
+
+		assertEquals(0, invoice.getItems().size());
+	}
+
+	// testy zachowania
+	@Test
+	public void zadanieWydaniaFakturyZDwiemaPozycjamiPowinnoWywolacMetodeCalculateTaxDwaRazy() {
+		InvoiceRequest req = InvoiceRequestBuilder
+				.builder()
+				.withProductsCount(2)
+				.build();
+		bookKeeper.issuance(req, taxPolicyMock);
+
 		Mockito.verify(taxPolicyMock, Mockito.times(2)).calculateTax(Mockito.any(), Mockito.any());
 	}
 
 	@Test
 	public void zadanieWydaniaFakturyBezPozycjiPowinnoWywolacMetodeCalculateTaxZeroRazy() {
 		InvoiceRequest req = InvoiceRequestBuilder.builder().build();
-		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
+		bookKeeper.issuance(req, taxPolicyMock);
 
-		assertEquals(0, invoice.getItems().size());
 		Mockito.verify(taxPolicyMock, Mockito.times(0)).calculateTax(Mockito.any(), Mockito.any());
 	}
 
