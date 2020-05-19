@@ -31,8 +31,8 @@ public class InvoiceRequestBuilder {
 	public InvoiceRequestBuilder withProductsCount(int count) {
 		for (int i = 0; i < count; i++) {
 			productsList.add(new Product(
-					Mockito.mock(Id.class),
-					Mockito.mock(Money.class),
+					Id.generate(),
+					Money.ZERO,
 					"",
 					ProductType.STANDARD
 			));
@@ -44,7 +44,7 @@ public class InvoiceRequestBuilder {
 
 		InvoiceRequest request;
 		if (client == null) {
-			client = Mockito.mock(ClientData.class);
+			client = new ClientData(Id.generate(), "");
 		}
 		request = new InvoiceRequest(client);
 
