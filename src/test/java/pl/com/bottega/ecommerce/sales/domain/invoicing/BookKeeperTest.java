@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.Id;
+import pl.com.bottega.ecommerce.sales.domain.productscatalog.ProductType;
+import pl.com.bottega.ecommerce.sharedkernel.Money;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +18,11 @@ class BookKeeperTest {
 	@BeforeAll
 	static public void init() {
 		bookKeeper = new BookKeeper(new InvoiceFactory());
-		taxPolicyMock = TaxPolicyMockBuilder.builder().build();
+
+		// mock TaxPolicy
+        taxPolicyMock = Mockito.mock(TaxPolicy.class);
+        Tax tax = new Tax(Money.ZERO, "");
+        Mockito.when(taxPolicyMock.calculateTax(Mockito.any(ProductType.class), Mockito.any(Money.class))).thenReturn(tax);
 	}
 
 	// testy stanu
