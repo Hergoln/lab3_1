@@ -1,5 +1,6 @@
 package pl.com.bottega.ecommerce.sales.domain.invoicing;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import pl.com.bottega.ecommerce.canonicalmodel.publishedlanguage.ClientData;
@@ -9,12 +10,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookKeeperTest {
 
+	static private BookKeeper bookKeeper;
+	static private TaxPolicy taxPolicyMock;
+
+	@BeforeAll
+	static public void init() {
+		bookKeeper = new BookKeeper(new InvoiceFactory());
+		taxPolicyMock = TaxPolicyMockBuilder.builder().build();
+	}
+
 	// testy stanu
 	@Test
 	public void zadanieWydaniaFakturyZJednaPozycjaPowinnoZwrocicFaktureZJednaPozycja() {
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
-		TaxPolicy taxPolicyMock = TaxPolicyMockBuilder.builder().build();
-
 		InvoiceRequest request = InvoiceRequestMockBuilder.builder().withProductsCount(1).build();
 
 		Invoice invoice = bookKeeper.issuance(request, taxPolicyMock);
@@ -24,9 +31,6 @@ class BookKeeperTest {
 
 	@Test
 	public void zadanieWydaniaFakturyBezPozycjiPowinnoZwrocicFuktureBezPozycji() {
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
-		TaxPolicy taxPolicyMock = TaxPolicyMockBuilder.builder().build();
-
 		InvoiceRequest req = InvoiceRequestMockBuilder.builder().build();
 		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
 
@@ -35,8 +39,6 @@ class BookKeeperTest {
 
 	@Test
 	public void fakturaWykonanaDlaDanegoKlientaFaktyczniePosiadaDaneTegoKlienta() {
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
-		TaxPolicy taxPolicyMock = TaxPolicyMockBuilder.builder().build();
 		InvoiceRequest req = InvoiceRequestMockBuilder
 				.builder()
 				.withClient(new ClientData(new Id("007"), "James Bond"))
@@ -50,9 +52,6 @@ class BookKeeperTest {
 	// testy zachowania
 	@Test
 	public void zadanieWydaniaFakturyZDwiemaPozycjamiPowinnoWywolacMetodeCalculateTaxDwaRazy() {
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
-		TaxPolicy taxPolicyMock = TaxPolicyMockBuilder.builder().build();
-
 		InvoiceRequest req = InvoiceRequestMockBuilder
 				.builder()
 				.withProductsCount(2)
@@ -65,9 +64,6 @@ class BookKeeperTest {
 
 	@Test
 	public void zadanieWydaniaFakturyBezPozycjiPowinnoWywolacMetodeCalculateTaxZeroRazy() {
-		BookKeeper bookKeeper = new BookKeeper(new InvoiceFactory());
-		TaxPolicy taxPolicyMock = TaxPolicyMockBuilder.builder().build();
-
 		InvoiceRequest req = InvoiceRequestMockBuilder.builder().build();
 		Invoice invoice = bookKeeper.issuance(req, taxPolicyMock);
 
@@ -80,7 +76,6 @@ class BookKeeperTest {
 		InvoiceFactory invoiceFactoryMock = Mockito.mock(InvoiceFactory.class);
 		BookKeeper bookKeeper = new BookKeeper(invoiceFactoryMock);
 
-		TaxPolicy taxPolicyMock = TaxPolicyMockBuilder.builder().build();
 		InvoiceRequest req = InvoiceRequestMockBuilder.builder().build();
 		bookKeeper.issuance(req, taxPolicyMock);
 
